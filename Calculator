@@ -1,0 +1,120 @@
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+
+        Scanner reader = new Scanner(System.in);
+        System.out.println("Введите два числа (римских или арабских) и арифметическую операцию:");
+        String input0 = reader.nextLine();
+        String input = input0.replaceAll("\\s", "");
+        input = input.toUpperCase();
+        System.out.println(calc(input));
+        reader.close();
+    }
+
+    public static String calc(String input) throws Exception {
+        int a;
+        int b;
+        String opt;
+        String result;
+        Boolean isR;
+
+        String[] operands = input.split("[^0-9[IVX]]");
+        if (operands.length > 2) {
+            throw new Exception("Только два числа для вычислений сегодня.");
+        } else if (operands.length <2) {
+            throw new Exception("Требуется два числа для выполнения операции");
+        }
+
+        opt = detectOpt(input);
+        if (opt == null) {
+            throw new Exception("Доступные операции для вычисления: +, -, /, *.");
+        }
+
+        if (!Rome.isR(operands[0]) && !Rome.isR(operands[1])) {
+            a = Integer.parseInt(operands[0]);
+            b = Integer.parseInt(operands[1]);
+            isR = false;
+        }
+        else if (Rome.isR(operands[0]) && Rome.isR(operands[1])) {
+            a = Rome.rTa(operands[0]);
+            b = Rome.rTa(operands[1]);
+            isR = true;
+        }
+        else {
+            throw new Exception("Необходимо выбрать один формат цифр для расчета.");
+        }
+
+        if (a > 10 || b > 10) {
+            throw new Exception("Только от 1 до 10, пожалуйста.");
+        }
+
+        int arab = mathOps(a, b, opt);
+
+
+        if(isR) {
+            result = Rome.aTr(arab);
+        }
+        else {
+            result = String.valueOf(mathOps(a, b, opt));
+        }
+        return result;
+    }
+
+    static String detectOpt(String input) {
+        if (input.contains("+")) return "+";
+        else if (input.contains("-")) return "-";
+        else if (input.contains("*")) return "*";
+        else if (input.contains("/")) return "/";
+        else return null;
+    }
+
+    static int mathOps(int a, int b, String opt) {
+        return switch (opt) {
+            case "+" -> a + b;
+            case "-" -> a - b;
+            case "/" -> a / b;
+            default -> a * b;
+        };
+
+    }
+    static class Rome {
+        static String[] rNum = new String[] {"0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI",
+                "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII", "XXIII", "XXIV",
+                "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX", "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI",
+                "XXXVII", "XXXVIII", "XXXIX", "XL", "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII",
+                "XLIX", "L", "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX", "LXI", "LXII",
+                "LXIII", "LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX", "LXXI", "LXXII", "LXXIII", "LXXIV",
+                "LXXV", "LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX", "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV",
+                "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC", "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII",
+                "XCVIII", "XCIX", "C"};
+
+        static boolean isR(String val) {
+            for (int i = 0; i < rNum.length; i++ ) {
+                if (val.equals(Rome.rNum[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        static int rTa(String rome) {
+            for (int i=0; i< rNum.length; i++) {
+                if (rome.equals(Rome.rNum[i])) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        static String aTr(int arab) throws Exception {
+            if (arab<0) {
+                throw new Exception("Результат вычислений отрицательный. \nПопробуйте тоже самое с арабскими цифрами.");
+            }
+            else {
+                return rNum[arab];
+            }
+        }
+    }
+}
