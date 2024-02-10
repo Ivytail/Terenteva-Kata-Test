@@ -109,8 +109,8 @@ public class Main {
         }
 
         static String aTr(int arab) throws Exception {
-            if (arab<0) {
-                throw new Exception("Результат вычислений отрицательный. \nПопробуйте тоже самое с арабскими цифрами.");
+            if (arab<1) {
+                throw new Exception("Результат вычислений отрицательный или равен нулю. \nПопробуйте тоже самое с арабскими цифрами.");
             }
             else {
                 return rNum[arab];
